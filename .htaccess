@@ -1,0 +1,8 @@
+#AuthUserFile /var/www/virtual/systest/.htpwd
+#AuthGroupFile /dev/null
+#AuthName "private"
+#AuthType Basic
+
+<Limit GET POST>
+#require valid-user
+</Limit>

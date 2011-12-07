@@ -1,0 +1,10 @@
+/* 8. CUSTOM LAYOUT & TYPOGRAPHY (Daddy bear)
+----------------------------------------------------------------------------------------*/
+.slider{min-width: 100%;max-width: 120em;}
+img {max-width: 100%;}
+
+/* 9. CUSTOM LAYOUT & TYPOGRAPHY (Mummy bear)
+----------------------------------------------------------------------------------------*/
+@media screen and (min-width: 30em) and (max-width: 63.236em) {
+	img {max-width: 30em;}
+}
