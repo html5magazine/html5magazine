@@ -1,90 +1,50 @@
-var epaper = {};
+var ep = epaper = {};
 
 (function() {
-	epaper.app = {};
-	epaper.options = {
-		'directory' : 'epaper',
+	ep.app = {};
+	ep.animate = {};
+	ep.options = {
+		'directory'                 : 'epaper',
 		'numberOfPagesToLoadOnInit' : 3,
-		'numberOfPagesLoaded' : 0,
-		'sliderPosition' : 0,
-		'currentSlide' : 0,
-		'sliderMove' : 800,
-		'maxSlide' : 5
+		'numberOfPagesLoaded'       : 0,
+		'sliderPosition'            : 0,
+		'currentSlide'              : 0,
+		'sliderMove'                : 800,
+		'maxSlide'                  : 5,
+		'animate'                   : ''
 	};
 	
-	epaper.init = function(options){
-		epaper.registerEvents();
-		
-		epaper.options = epaper.combine(epaper.options, options);
-		epaper.prepareOptions();
-		for(var i = 0; i < epaper.options.numberOfPagesToLoadOnInit; i++)
+	ep.init = function(options){
+		ep.registerEvents();
+		if(window["WebKitCSSMatrix"])
 		{
-			epaper.load(i);
+			ep.options.animate = '3d';
 		}
-	};
-	
-	var empty = {};
-	function mixin(/* Object */target, /* Object */source) {
-		var name, s, i;
-		for (name in source) {
-			s = source[name];
-			if (!(name in target) || (target[name] !== s && (!(name in empty) || empty[name] !== s))) {
-				target[name] = s;
-			}
-		}
-		return target; // Object
-	};
-	epaper.mixin = function(/* Object */obj, /* Object... */props) {
-		if (!obj) {
-			obj = {};
-		}
-		for ( var i = 1, l = arguments.length; i < l; i++) {
-			mixin(obj, arguments[i]);
-		}
-		return obj; // Object
-	};
-
-	// create a new object, combining the properties of the passed objects with
-	// the last arguments having
-	// priority over the first ones
-	epaper.combine = function(/* Object */obj, /* Object... */props) {
-		var newObj = {};
-		for ( var i = 0, l = arguments.length; i < l; i++) {
-			mixin(newObj, arguments[i]);
-		}
-		return newObj;
-	};
-	
-	epaper.prepareOptions = function(){
-		var optionList = [];
-		for(var i = 0, l = epaper.options.contents.length; i < l; i++)
+		ep.app.slider = $('.slide-list');
+		ep.options = ep.combine(ep.options, options);
+		ep.prepareOptions();
+		for(var i = 0; i < ep.options.numberOfPagesToLoadOnInit; i++)
 		{
-			optionList[i] = {
-				'page' : epaper.options.contents[i],
-				'isLoaded' : false
-			};
+			ep.load(i);
 		}
-		epaper.options.maxSlide = optionList.length - 1;
-		epaper.options.contents = optionList;
 	};
-	epaper.loadSuccess = function(data){
-		$('#page' + epaper.options.numberOfPagesLoaded).parent('li').show();
-		if((epaper.options.numberOfPagesToLoadOnInit - 1) === epaper.options.numberOfPagesLoaded)
+	ep.loadSuccess = function(data){
+		ep.options.numberOfPagesLoaded++;
+		$('#page' + (ep.options.numberOfPagesLoaded - 1)).parent('li').show();
+		if(ep.options.numberOfPagesToLoadOnInit === ep.options.numberOfPagesLoaded)
 		{
-			epaper.removeLoading();
-			epaper.calculate();
+			ep.calculate();
+			ep.removeLoading();
 		}
-		epaper.options.numberOfPagesLoaded++;
-	};
-	epaper.loadNextPageSuccess = function(data){
-		$('#page' + epaper.options.numberOfPagesLoaded).parent('li').show();
-		epaper.calculatePage(epaper.options.numberOfPagesLoaded);
-		epaper.options.numberOfPagesLoaded++;
-	};
-	epaper.load = function(page){
-		if(epaper.options.contents[page].isLoaded === false)
+		if(ep.options.numberOfPagesLoaded > ep.options.numberOfPagesToLoadOnInit)
 		{
-			var content = epaper.options.contents[page].page;
+			ep.calculate();
+		}
+	};
+	ep.load = function(page){
+		if(ep.options.contents[page].isLoaded === false)
+		{
+			var content = ep.options.contents[page].page;
 			
 			if($.isArray(content))
 			{
@@ -92,44 +52,36 @@ var epaper = {};
 			}
 			else
 			{
-				$('ul.slide-list').append('<li><section id="page' + page + '"></section></li>');
-				$('#page' + page).load(epaper.options.directory + '/' + content, epaper.loadSuccess);
+				$('ul.slide-list').append(ep.ui.createPage({'page': page}));
+				$('#page' + page).load(ep.options.directory + '/' + content, ep.loadSuccess);
 			}
 			
-			epaper.options.contents[page].isLoaded = true;
+			ep.options.contents[page].isLoaded = true;
+			
+			return true;
 		}
-		else
-		{
-			console.log('page ' + page + ' already loaded!');
-		}
+		
+		return false;
 	};
-	epaper.loadNextPage = function(){
-		var success = false;
-		for(var i = 0, l = epaper.options.contents.length; i < l; i++)
+	ep.loadNextPage = function(){
+		for(var i = 0, l = ep.options.contents.length; i < l; i++)
 		{
-			if(success === false)
+			if(ep.options.contents[i].isLoaded === false)
 			{
-				if(epaper.options.contents[i].isLoaded === false)
-				{
-					var content = epaper.options.contents[i].page;
-					$('ul.slide-list').append('<li><section id="page' + i + '"></section></li>');
-					$('#page' + i).load(epaper.options.directory + '/' + content, epaper.loadNextPageSuccess);
-					epaper.options.contents[i].isLoaded = true;
-					success = true;
-				}
-				else
-				{
-					console.log('page ' + i + ' already loaded!');
-				}
+				ep.load(i);
+				
+				return true;
 			}
 		}
+		
+		return false;
 	};
-	epaper.removeLoading = function(){
+	
+	ep.removeLoading = function(){
 		$('#loader').remove();
 	};
 	
-	epaper.registerEvents = function(){
-		
+	ep.registerEvents = function(){
 		if(typeof document.ontouchmove !== 'undefined'){
 			$('body').bind('touchmove', function(event){
 				if(!event.elementIsEnabled)
@@ -137,97 +89,159 @@ var epaper = {};
 					event.preventDefault();
 				}
 			});
-			$('#nav-left').css('display', 'none');
-			$('#nav-right').css('display', 'none');
 			//apply touch events
 			$('.slider').swipeRight(function(){
-				epaper.options.currentSlide--;
-				
-				if(epaper.options.currentSlide <= 0)
-				{
-					epaper.options.currentSlide = 0;
-				}
-				epaper.options.sliderPosition = (epaper.options.currentSlide * epaper.options.sliderMove) * -1;
-				$('.slide-list').animate({translate3d: epaper.options.sliderPosition + 'px,0,0'}, 300, 'linear');
+				ep.animate.left();
 			});
 			$('.slider').swipeLeft(function(){
-				epaper.loadNextPage();
-				epaper.options.currentSlide++;
-				if(epaper.options.currentSlide >= epaper.options.maxSlide)
-				{
-					epaper.options.currentSlide = epaper.options.maxSlide;
-				}
-				epaper.options.sliderPosition = (epaper.options.currentSlide * epaper.options.sliderMove) * -1;
-				$('.slide-list').animate({translate3d: epaper.options.sliderPosition + 'px,0,0'}, 300, 'linear');
+				ep.loadNextPage();
+				ep.animate.right();
+				
 			});
-			window.onorientationchange = epaper.orientation;
+			window.onorientationchange = ep.orientation;
 
 		}else{
 		    //apply mouse click events
-			//alert('mouse');
+			$('#nav-left').css('display', 'block');
+			$('#nav-right').css('display', 'block');
 			$('#nav-left').bind('click', function(){
-				epaper.options.currentSlide--;
-				
-				if(epaper.options.currentSlide <= 0)
-				{
-					epaper.options.currentSlide = 0;
-				}
-				epaper.options.sliderPosition = (epaper.options.currentSlide * epaper.options.sliderMove) * -1;
-				$('.slide-list').animate({translate: epaper.options.sliderPosition + 'px'}, 300, 'linear');
+				ep.animate.left();
 				
 			});
 			$('#nav-right').bind('click', function(){
-				epaper.loadNextPage();
-				epaper.options.currentSlide++;
-				if(epaper.options.currentSlide >= epaper.options.maxSlide)
-				{
-					epaper.options.currentSlide = epaper.options.maxSlide;
-				}
-				epaper.options.sliderPosition = (epaper.options.currentSlide * epaper.options.sliderMove) * -1;
-				
-				$('.slide-list').animate({translate: epaper.options.sliderPosition + 'px'}, 300, 'linear');
+				ep.loadNextPage();
+				ep.animate.right();
+			});
+			
+			W(function(){
+			    // Refresh stylesheets to force contents adaptation (especially for zooming and text size changing)
+			    var links = document.getElementsByTagName('link'),
+			        i = -1,
+			        element;
+			    while(element = links[++i]){
+			        if(element.rel == 'stylesheet'){
+			            element.disabled=true;
+			            element.disabled=false;
+			        }
+			    }
+			    ep.calculate();
+			    ep.animate.center();
 			});
 		}
 		
-		W(function(){
-		    // Refresh stylesheets to force contents adaptation (especially for zooming and text size changing)
-		    var links = document.getElementsByTagName('link'),
-		        i = -1,
-		        element;
-		    while(element = links[++i]){
-		        if(element.rel == 'stylesheet'){
-		            element.disabled=true;
-		            element.disabled=false;
-		        }
-		    }
-		    epaper.calculate();
+		
+	};
+	
+	ep.calculate = function(){
+		console.log('calculate');
+		var width, 
+			height,
+			section,
+			marginLeft,
+			viewport = $('.slider');
+		width = viewport.css('width');
+		width = parseInt(width.replace(/px/, ''));
+		
+		section = width * 0.8;
+		marginLeft = width * 0.05;
+		console.log('section: ' + section);
+		console.log('marginLeft: ' + marginLeft);
+		height = viewport.css('height');
+		height = parseInt(height.replace(/px/, ''));
+		ep.options.sliderMove = section + marginLeft;
+		$('section').css({
+			'width': section + 'px',
+			'margin-left': marginLeft + 'px'
 		});
+		$('#page0').css({
+			'margin-left': (marginLeft * 2) + 'px'
+		});
+		ep.options.sliderPosition = (ep.options.currentSlide * ep.options.sliderMove) * -1;
 	};
 	
-	epaper.calculate = function(){
-		var viewport = $('.slider').css('width');
-		viewport = parseInt(viewport.replace(/px/, ''));
-		var section = viewport * 0.75;
-		var marginLeft = viewport * 0.05;
-		var leftSpace = viewport * 0.1;
-		epaper.options.sliderMove = section + marginLeft;
-		console.log(section + marginLeft);
-		$('section').css({'width': section + 'px', 'max-width': section + 'px', 'margin-left': marginLeft + 'px'});
-		$('#page0').css({'margin-left': (marginLeft + leftSpace) + 'px'});
-		epaper.options.sliderPosition = (epaper.options.currentSlide * epaper.options.sliderMove) * -1;
-		$('.slide-list').animate({translate: epaper.options.sliderPosition + 'px'}, 300, 'linear');
+	ep.orientation = function(){
+		console.log('orientation');
+		ep.calculate();
+		ep.animate.center();
+	};
+	ep.animate.left = function(){
+		ep.options.currentSlide--;
+		
+		if(ep.options.currentSlide < 0)
+		{
+			ep.options.currentSlide = 0;
+		}
+		else
+		{
+			ep.animate.core('left');
+		}
+	};
+	ep.animate.right = function(){
+		ep.loadNextPage();
+		ep.options.currentSlide++;
+		if(ep.options.currentSlide > ep.options.maxSlide)
+		{
+			ep.options.currentSlide = ep.options.maxSlide;
+		}
+		else
+		{
+			ep.animate.core('right');
+		}
+	};
+	ep.animate.center = function(){
+		ep.animate.core('center');
+	};
+	ep.animate.core = function(direction){
+
+		//var translate = 'translate';
+		//var suffix = 'px';
+		if(ep.options.animate === '3d')
+		{
+			//translate = 'translate3d';
+			//suffix = 'px,0,0';
+			ep.app.slider.animate({translate3d: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px,0,0'}, 300, 'linear');
+		}
+		else
+		{
+			ep.app.slider.animate({translate: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px'}, 300, 'linear');
+		}
 	};
 	
-	epaper.calculatePage = function(pageId){
-		var viewport = $('.slider').css('width');
-		viewport = parseInt(viewport.replace(/px/, ''));
-		var section = viewport * 0.75;
-		var marginLeft = viewport * 0.05;
-		var leftSpace = viewport * 0.1;
-		$('#page' + pageId).css({'width': section + 'px', 'max-width': section + 'px', 'margin-left': marginLeft + 'px'});
+	// ultilities
+	ep.mixin = function (target, source) {
+		var name, s, i;
+		for (name in source) {
+			s = source[name];
+			if (!(name in target) || (target[name] !== s)) {
+				target[name] = s;
+			}
+		}
+		return target;
+	};
+
+
+	// create a new object, combining the properties of the passed objects with
+	// the last arguments having
+	// priority over the first ones
+	ep.combine = function (obj, props) {
+		var newObj = {};
+		for ( var i = 0, l = arguments.length; i < l; i++) {
+			ep.mixin(newObj, arguments[i]);
+		}
+		return newObj;
 	};
 	
-	epaper.orientation = function(){
-		epaper.calculate();
+	ep.prepareOptions = function(){
+		var optionList = [];
+		for(var i = 0, l = ep.options.contents.length; i < l; i++)
+		{
+			optionList[i] = {
+				'page'      : ep.options.contents[i],
+				'isLoaded'  : false,
+				'calculated' : false
+			};
+		}
+		ep.options.maxSlide = optionList.length - 1;
+		ep.options.contents = optionList;
 	};
 }());

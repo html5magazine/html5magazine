@@ -103,14 +103,21 @@ a:active, a:focus { outline: none; }
 
 /* 5. GLOBAL LAYOUT & GLOBAL CUSTOM TYPOGRAPHY
 ----------------------------------------------------------------------------------------*/
-
-
+#nav-left {
+ display: none;	
+}
+#nav-right {
+ display: none;	
+}
 
 /* 6. CUSTOM LAYOUT & TYPOGRAPHY (Baby bear)
 ----------------------------------------------------------------------------------------*/
-.slider{min-width: 100%;max-width: 100%;}
-img {max-width: 30em;}
-section{margin:auto;}
+p, ul, ol, dl, blockquote {
+    font-size: 1em;
+    line-height: 1.618em;
+    margin-bottom: 1.618em;
+    max-width: 30em;
+  }
 
 /* 7. BROWSER AND NON-SEMANTIC STYLING
 ----------------------------------------------------------------------------------------*/
