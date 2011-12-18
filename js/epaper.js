@@ -3,82 +3,70 @@ var ep = epaper = {};
 (function() {
 	ep.app = {};
 	ep.animate = {};
+	ep.flip = {};
 	ep.options = {
 		'directory'                 : 'epaper',
-		'numberOfPagesToLoadOnInit' : 3,
+		'numberOfPagesToLoadOnInit' : 4,
 		'numberOfPagesLoaded'       : 0,
-		'sliderPosition'            : 0,
 		'currentSlide'              : 0,
 		'sliderMove'                : 800,
 		'maxSlide'                  : 5,
 		'animate'                   : ''
 	};
+	ep.start = function(options){
+		for(i in options)
+		{
+			ep.options[i] = options[i];
+		}
+		var json = options.json || 'epaper/epaper.json';
+		ep.loadJson(json);
+	};
 	
 	ep.init = function(options){
-		ep.registerEvents();
+	    ep.app.viewport = $('#slider');
+	    ep.app.slides = [
+	    	{
+	    		'page' : 'page-0',
+	    		'left' : -80,
+	    		'slide': -1
+	    	},
+	    	{
+	    		'page' : 'page-1',
+	    		'left' : 5,
+	    		'slide': 0
+	    	},
+	    	{
+	    		'page' : 'page-2',
+	    		'left' : 90,
+	    		'slide': 1
+	    	},
+	    	{
+	    		'page' : 'page-3',
+	    		'left' : 175,
+	    		'slide': 2
+	    	},
+	    	{
+	    		'page' : 'page-4',
+	    		'left' : 260,
+	    		'slide': 3
+	    	}
+	    ];
+	    ep.flip.queue = [];
+	    console.log(ep.app.slides);
+	    ep.app.ocTimer = null;
+	    ep.registerEvents();
+	    
 		if(window["WebKitCSSMatrix"])
 		{
 			ep.options.animate = '3d';
 		}
-		ep.app.slider = $('.slide-list');
-		ep.options = ep.combine(ep.options, options);
-		ep.prepareOptions();
-		for(var i = 0; i < ep.options.numberOfPagesToLoadOnInit; i++)
-		{
-			ep.load(i);
-		}
-	};
-	ep.loadSuccess = function(data){
-		ep.options.numberOfPagesLoaded++;
-		$('#page' + (ep.options.numberOfPagesLoaded - 1)).parent('li').show();
-		if(ep.options.numberOfPagesToLoadOnInit === ep.options.numberOfPagesLoaded)
-		{
-			ep.calculate();
-			ep.removeLoading();
-		}
-		if(ep.options.numberOfPagesLoaded > ep.options.numberOfPagesToLoadOnInit)
-		{
-			ep.calculate();
-		}
-	};
-	ep.load = function(page){
-		if(ep.options.contents[page].isLoaded === false)
-		{
-			var content = ep.options.contents[page].page;
-			
-			if($.isArray(content))
-			{
-				// todo multiple articles one one page
-			}
-			else
-			{
-				$('ul.slide-list').append(ep.ui.createPage({'page': page}));
-				$('#page' + page).load(ep.options.directory + '/' + content, ep.loadSuccess);
-			}
-			
-			ep.options.contents[page].isLoaded = true;
-			
-			return true;
-		}
 		
-		return false;
-	};
-	ep.loadNextPage = function(){
-		for(var i = 0, l = ep.options.contents.length; i < l; i++)
+		for(i in options)
 		{
-			if(ep.options.contents[i].isLoaded === false)
-			{
-				ep.load(i);
-				
-				return true;
-			}
+			ep.options[i] = options[i];
 		}
-		
-		return false;
-	};
-	
-	ep.removeLoading = function(){
-		$('#loader').remove();
+		ep.options.maxSlide = (ep.options.contents.length - 1);
+		ep.initLoad();
 	};
 	
 	ep.registerEvents = function(){
@@ -90,94 +78,137 @@ var ep = epaper = {};
 				}
 			});
 			//apply touch events
-			$('.slider').swipeRight(function(){
+			$('#slider').swipeRight(function(){
 				ep.animate.left();
 			});
-			$('.slider').swipeLeft(function(){
-				ep.loadNextPage();
+			$('#slider').swipeLeft(function(){
+				//ep.loadNextPage();
 				ep.animate.right();
 				
 			});
-			window.onorientationchange = ep.orientation;
+
+			window.addEventListener('orientationchange', ep.orientation, false);
 
 		}else{
-		    //apply mouse click events
-			$('#nav-left').css('display', 'block');
-			$('#nav-right').css('display', 'block');
-			$('#nav-left').bind('click', function(){
-				ep.animate.left();
-				
-			});
-			$('#nav-right').bind('click', function(){
-				ep.loadNextPage();
+		    //apply mouse events
+			/** /
+			document.addEventListener('mousemove', function(){
 				ep.animate.right();
 			});
-			
-			W(function(){
-			    // Refresh stylesheets to force contents adaptation (especially for zooming and text size changing)
-			    var links = document.getElementsByTagName('link'),
-			        i = -1,
-			        element;
-			    while(element = links[++i]){
-			        if(element.rel == 'stylesheet'){
-			            element.disabled=true;
-			            element.disabled=false;
-			        }
-			    }
-			    ep.calculate();
-			    ep.animate.center();
+			/**/
+			window.addEventListener('resize', function(){
+				ep.animate.center();
 			});
 		}
-		
-		
+	};
+	
+	ep.initLoadSuccess = function(){
+		ep.options.numberOfPagesLoaded++;
+		if(ep.options.numberOfPagesToLoadOnInit === ep.options.numberOfPagesLoaded)
+		{
+			for(var i = 1; i <= ep.options.numberOfPagesToLoadOnInit; i++)
+			{
+				$('#page-' + i).show();
+			}
+			ep.removeLoading();
+		}
+	};
+	ep.initLoad = function(){
+		for(var i = 1; i <= ep.options.numberOfPagesToLoadOnInit; i++)
+		{
+			var content = ep.options.contents[i - 1];
+			if($.isArray(content))
+			{
+				// todo multiple articles one one page
+			}
+			else
+			{
+				$('#page-' + i).load(ep.options.directory + '/' + content, ep.initLoadSuccess);
+			}
+		}
+	};
+	
+	ep.loadSuccess = function(){
+		ep.options.numberOfPagesLoaded++;
+		var slide = ep.flip.queue.shift();
+		$('#' + slide.page).show();
+	};
+	
+	ep.load = function(slide){
+		if(slide.slide >= 0 && slide.slide <= ep.options.maxSlide)
+		{
+			// load slide
+			console.log(ep.app.slides);
+			console.log(slide);
+			var content = ep.options.contents[slide.slide];
+			ep.flip.queue.push(slide);
+			var page = $('#' + slide.page);
+			page.css('left', slide.left + '%');
+			page.load(ep.options.directory + '/' + content, ep.loadSuccess);
+		}
+	};
+	
+	
+	ep.removeLoading = function(){
+		$('#loader').remove();
+	};
+	
+	ep.flip.left = function(){
+		var previousContent = ep.app.slides[0].slide - 1;
+		if(ep.options.currentSlide < (ep.options.maxSlide - 1) && previousContent in ep.options.contents)
+		{
+			var slide = ep.app.slides.pop();
+			var previousSlide = {
+				'page' : slide.page,
+				'left' : (ep.app.slides[0].left - 85),
+				'slide': (ep.app.slides[0].slide - 1)
+			};
+			ep.app.slides.unshift(previousSlide);
+			ep.load(previousSlide);
+		}
+	};
+	
+	ep.flip.right = function(){
+		var nextContent = ep.app.slides[ep.app.slides.length - 1].slide + 1;
+		if(ep.options.currentSlide > 1 && nextContent in ep.options.contents)
+		{
+			var slide = ep.app.slides.shift();
+			var nextSlide = {
+				'page' : slide.page,
+				'left' : (ep.app.slides[ep.app.slides.length - 1].left + 85),
+				'slide': (ep.app.slides[ep.app.slides.length - 1].slide + 1)
+				
+			};
+			ep.app.slides.push(nextSlide);
+			ep.load(nextSlide);
+		}
 	};
 	
 	ep.calculate = function(){
-		console.log('calculate');
-		var width, 
-			height,
-			section,
-			marginLeft,
-			viewport = $('.slider');
-		width = viewport.css('width');
+		var section = $('#page-1'), width, marginLeft;
+		width = section.css('width');
+		marginLeft = section.css('margin-left');
 		width = parseInt(width.replace(/px/, ''));
+		marginLeft = parseInt(marginLeft.replace(/px/, ''));
 		
-		section = width * 0.8;
-		marginLeft = width * 0.05;
-		console.log('section: ' + section);
-		console.log('marginLeft: ' + marginLeft);
-		height = viewport.css('height');
-		height = parseInt(height.replace(/px/, ''));
-		ep.options.sliderMove = section + marginLeft;
-		$('section').css({
-			'width': section + 'px',
-			'margin-left': marginLeft + 'px'
-		});
-		$('#page0').css({
-			'margin-left': (marginLeft * 2) + 'px'
-		});
-		ep.options.sliderPosition = (ep.options.currentSlide * ep.options.sliderMove) * -1;
+		ep.options.sliderMove = width + marginLeft;
 	};
 	
-	ep.orientation = function(){
-		console.log('orientation');
-		ep.calculate();
-		ep.animate.center();
-	};
 	ep.animate.left = function(){
 		ep.options.currentSlide--;
-		
 		if(ep.options.currentSlide < 0)
 		{
 			ep.options.currentSlide = 0;
 		}
 		else
 		{
-			ep.animate.core('left');
+			ep.animate.core();
+			ep.flip.left();
 		}
+		
 	};
+	
 	ep.animate.right = function(){
-		ep.loadNextPage();
 		ep.options.currentSlide++;
 		if(ep.options.currentSlide > ep.options.maxSlide)
 		{
@@ -185,63 +216,52 @@ var ep = epaper = {};
 		}
 		else
 		{
-			ep.animate.core('right');
+			ep.animate.core();
+			ep.flip.right();
 		}
 	};
+	
 	ep.animate.center = function(){
-		ep.animate.core('center');
+		ep.animate.core();
 	};
-	ep.animate.core = function(direction){
-
-		//var translate = 'translate';
-		//var suffix = 'px';
+	
+	ep.animate.core = function(){
+		console.log(ep.options.currentSlide);
+		ep.calculate();
 		if(ep.options.animate === '3d')
 		{
-			//translate = 'translate3d';
-			//suffix = 'px,0,0';
-			ep.app.slider.animate({translate3d: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px,0,0'}, 300, 'linear');
+			ep.app.viewport.animate({translate3d: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px,0,0'}, 300, 'linear');
 		}
 		else
 		{
-			ep.app.slider.animate({translate: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px'}, 300, 'linear');
+			ep.app.viewport.animate({translate: ((ep.options.currentSlide * ep.options.sliderMove) * -1) + 'px'}, 300, 'linear');
 		}
 	};
 	
-	// ultilities
-	ep.mixin = function (target, source) {
-		var name, s, i;
-		for (name in source) {
-			s = source[name];
-			if (!(name in target) || (target[name] !== s)) {
-				target[name] = s;
+	ep.orientation = function(){
+	    if($.os.ios)
+	    {
+	        ep.animate.center();
+	    }
+	    else
+	    {
+	        clearTimeout(ep.app.ocTimer);
+	        ep.app.ocTimer = setTimeout(function () {
+                ep.animate.center();
+            }, 500);
+	    }
+	};
+	
+	ep.loadJson = function(json){
+		$.getJSON(
+			json,
+			epaper.init,
+			function(error){
+				console.log(error);
 			}
-		}
-		return target;
+		);
 	};
-
-
-	// create a new object, combining the properties of the passed objects with
-	// the last arguments having
-	// priority over the first ones
-	ep.combine = function (obj, props) {
-		var newObj = {};
-		for ( var i = 0, l = arguments.length; i < l; i++) {
-			ep.mixin(newObj, arguments[i]);
-		}
-		return newObj;
-	};
-	
-	ep.prepareOptions = function(){
-		var optionList = [];
-		for(var i = 0, l = ep.options.contents.length; i < l; i++)
-		{
-			optionList[i] = {
-				'page'      : ep.options.contents[i],
-				'isLoaded'  : false,
-				'calculated' : false
-			};
-		}
-		ep.options.maxSlide = optionList.length - 1;
-		ep.options.contents = optionList;
-	};
+}());
+(function() {
+ep.start({});
 }());
