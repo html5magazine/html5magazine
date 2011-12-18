@@ -10,7 +10,7 @@ var ep = epaper = {};
 		'numberOfPagesLoaded'       : 0,
 		'currentSlide'              : 0,
 		'sliderMove'                : 800,
-		'maxSlide'                  : 5,
+		'maxSlide'                  : 1,
 		'animate'                   : ''
 	};
 	ep.start = function(options){
