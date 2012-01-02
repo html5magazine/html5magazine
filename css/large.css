@@ -24,3 +24,24 @@ p {
 img {
 	max-width: 24em;
 }
+.sidebar-list-item {
+	width: 100%;
+	border-bottom: 1px solid #242424;
+    border-top: 1px solid #707070;
+    display: block;
+    min-height: 52px;
+    padding: 0 18px 0 0;
+}
+.item-image {
+	width: 40px;
+	height: 40px;
+	margin: 6px;
+	float: left;
+}
+.item-text {
+	margin: 4px 0 4px 44px;
+	color: white;
+    font-family: Verdana,sans-serif;
+    font-size: 0.8em;
+    line-height: 1em;
+}

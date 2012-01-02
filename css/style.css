@@ -3,6 +3,9 @@
 h1, h2, h3, h4, h5, h6, th, td, caption {
 	font-weight:normal;
 }
+ul {
+	list-style: none; list-style-image: none; margin: 0; padding: 0;
+}
 img {
 	border: 0;
 }
@@ -90,10 +93,6 @@ section {
 }
 article {
 	overflow:auto;
-	/*
-	-moz-transition: width 0.5s ease 0s;
-	-webkit-transition: width 0.5s ease 0s;
-	*/
 	height: 94%;
 	width: 94%;
 	min-width: 94%;
@@ -104,16 +103,10 @@ article {
 	-moz-box-shadow: 0px 2px 8px rgba(187,187,187,0.7);
     -webkit-box-shadow: 0px 2px 8px rgba(187,187,187,0.7);
     box-shadow: 0px 2px 8px rgba(187,187,187,0.7);
-	
 }
 
 .page {
-	/*
-	-moz-transition: -moz-transform 0.2s cubic-bezier(0, 0, 0.25, 1) 0s;
-	-moz-transform: translate(0px, 0px);
-	-webkit-transition: -webkit-transform 0.2s cubic-bezier(0, 0, 0.25, 1) 0s;
-	-webkit-transform: translate3d(0, 0, 0);
-	*/
+
 }
 .landscape {
 	display: block;
@@ -168,8 +161,8 @@ article {
 	overflow-x: hidden;
 	overflow-y: scroll;
 	height: 100%;
-	width: 33%;
-	left: -33%;
+	width: 25%;
+	left: -25%;
 	top: 0;
 	z-index: 1;
 	background-color:#575757;
@@ -229,12 +222,15 @@ article {
 }
 
 .fixed #mg-container {
-	width: 67%;
-	margin-left: 33%;
+	width: 75%;
+	margin-left: 25%;
 }
 
 .fixed #mg-sidebar {
-	width: 33%;
+	width: 25%;
 	display: block;
 	left: 0;
+}
+.sidebar-list-item {
+	cursor: pointer;
 }

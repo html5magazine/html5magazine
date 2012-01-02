@@ -40,17 +40,18 @@ var mg = magazine = {};
 			mg.options.start = -100;
 			mg.options.step  = 100;
 		}
-		if(mg.options.sidebarFixed === true)
-		{
-			$('body').addClass('fixed');
-		}
-		else
-		{
-			$('#mg-sidebar-button-open').show();
-			$('#mg-sidebar-button-close').show();
-		}
+		
 		if(mg.options.sidebar === true)
 		{
+			if(mg.options.sidebarFixed === true)
+			{
+				$('body').addClass('fixed');
+			}
+			else
+			{
+				$('#mg-sidebar-button-open').show();
+				$('#mg-sidebar-button-close').show();
+			}
 			mg.loadSidebar();
 		}
 		mg.options.maxSlide = (mg.options.contents.length - 1);
@@ -207,29 +208,11 @@ var mg = magazine = {};
 	};
 	mg.sidebarHide = function()
 	{
-		/** /
-		var buttonOpen = $('#mg-sidebar-button-open');
-		var buttonClose = $('#mg-sidebar-button-close');
-		var sidebar = $('#mg-sidebar');
-		
-		buttonOpen.css('left', 0);
-		buttonClose.css('left', 0);
-		/**/
-		//sidebar.css('width', 0);
 		mg.animate.sidebar('close');
-		//buttonOpen.show();
+
 	};
 	mg.sidebarShow = function()
 	{
-		/** /
-		var buttonOpen = $('#mg-sidebar-button-open');
-		var buttonClose = $('#mg-sidebar-button-close');
-		var sidebar = $('#mg-sidebar');
-		buttonOpen.hide();
-		buttonClose.css('left', '33%');
-		/**/
-		//buttonOpen.css('left', '33%');
-		//sidebar.css('width', '33%');
 		mg.animate.sidebar('open');
 	};
 	mg.removeLoading = function(){
@@ -306,7 +289,7 @@ var mg = magazine = {};
 	};
 	
 	mg.animate.center = function(){
-		if(mg.options.sidebarFixed !== true)
+		if(mg.options.sidebar === true && mg.options.sidebarFixed !== true)
 	    {
 			mg.animate.sidebar('close', 'fast');
 	    }
@@ -382,9 +365,19 @@ var mg = magazine = {};
 	};
 	
 	mg.orientation = function(timeout){
-	    if(mg.options.sidebarFixed !== true)
+	    if(mg.options.sidebar === true && mg.options.sidebarFixed !== true)
 	    {
 	    	mg.animate.sidebar('close', 'fast');
+	    }
+	    if(mg.options.sidebar === true)
+	    {
+	    	if($.os.ios === true)
+			{
+				if(parseInt($.os.version) < 5)
+				{
+					mg.scroll.kinetic($('#mg-sidebar ul')[0]);
+				}
+			}
 	    }
 		(timeout === false ? timeout = false : timeout = true);
 	    var orientation = window.orientation;

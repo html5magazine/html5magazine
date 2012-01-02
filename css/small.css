@@ -26,3 +26,25 @@ p {
 img {
 	max-width: 16em;
 }
+
+.sidebar-list-item {
+	width: 100%;
+	border-bottom: 1px solid #242424;
+    border-top: 1px solid #707070;
+    display: block;
+    min-height: 26px;
+    padding: 0 6px 4px 0;
+}
+.item-image {
+	width: 20px;
+	height: 20px;
+	margin: 3px;
+	float: left;
+}
+.item-text {
+	margin-left: 24px;
+	color: white;
+    font-family: Verdana,sans-serif;
+    font-size: 0.6em;
+    line-height: 0.9em;
+}
