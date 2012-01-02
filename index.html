@@ -5,36 +5,47 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<title>epaper</title>
-		<link rel="stylesheet" href="epaper/css/style.css" media="all">
-		<link rel="stylesheet" href="epaper/css/small.css" media="all">
-		<link rel="stylesheet" href="epaper/css/medium.css" media="all and (min-width: 33.236em) and (max-width: 63.236em)">
-		<link rel="stylesheet" href="epaper/css/large.css" media="all and (min-width: 63.236em)">
+		<title>magazine</title>
+		<link rel="stylesheet" href="magazine/css/style.css" media="all">
+		<link rel="stylesheet" href="magazine/css/small.css" media="all">
+		<link rel="stylesheet" href="magazine/css/medium.css" media="all and (min-width: 33.236em) and (max-width: 63.236em)">
+		<link rel="stylesheet" href="magazine/css/large.css" media="all and (min-width: 63.236em)">
 		<script src="js/lib/zepto.min.js"></script>
-		<script src="js/epaper.js"></script>
+		<script src="js/lib/flicklist.js"></script>
+		<script src="js/lib/kinetic.js"></script>
+		<script src="js/magazine.js"></script>
 	</head>
 	<body>
-		<div id="loader">
+		<div id="mg-loader">
 			<p>lade Ausgabe</p>
 		</div>
-		<div id="container">
-			<div id="slider">
-				<section id="page-0" class="slider-page">
+		<div id="mg-container">
+			<div id="mg-slider">
+				<section id="mg-page-0" class="mg-slider-page">
 					
 				</section>
-				<section id="page-1" class="slider-page">
+				<section id="mg-page-1" class="mg-slider-page">
 					
 				</section>
-				<section id="page-2" class="slider-page">
+				<section id="mg-page-2" class="mg-slider-page">
 					
 				</section>
-				<section id="page-3" class="slider-page">
+				<section id="mg-page-3" class="mg-slider-page">
 					
 				</section>
-				<section id="page-4" class="slider-page">
+				<section id="mg-page-4" class="mg-slider-page">
 					
 				</section>
 			</div>
 		</div>
+		<div id="mg-sidebar">
+			<div id="mg-sidebar-content"></div>
+		</div>
+		<button id="mg-sidebar-button-open">
+			<span>Menu</span>
+		</button>
+		<button id="mg-sidebar-button-close">
+			<span>Schließen</span>
+		</button>
 	</body>
 </html>

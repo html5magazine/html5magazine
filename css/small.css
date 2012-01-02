@@ -1,4 +1,28 @@
 /* css for small devices e.g. iphone or other mobile phones */
 body {
-    background-color: #F08080;
+    /*background-color: #F08080;*/
+    background-color: #EEEEEE;
+    /*background: url('../images/r.png') repeat;*/
+    font-size: 1em;
+    line-height: 1.4em;
+    font-family: Georgia,serif;
+    color: #333333;
+    /*text-indent: 1em;*/
+    
+}
+p {
+	max-width: 20em;
+}
+
+.content {
+    -moz-column-count: 1;
+    -webkit-column-count: 1;
+    column-count: 1;
+    -moz-column-gap: 1em;
+    -webkit-column-gap: 1em;
+    column-gap: 1em;
+}
+
+img {
+	max-width: 16em;
 }
