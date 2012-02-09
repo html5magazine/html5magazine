@@ -12,7 +12,7 @@ var mg = magazine = {};
 		'numberOfPagesToLoadOnInit' : 4,
 		'numberOfPagesLoaded'       : 0,
 		'currentSlide'              : 0,
-		'currentPageId'             : 'page-1',
+		'currentPageId'             : 'slide-1',
 		'sliderMove'                : 800,
 		'maxSlide'                  : 1,
 		'animate'                   : '',
@@ -29,7 +29,7 @@ var mg = magazine = {};
 	};
 	
 	mg.init = function(options){
-		for(i in options)
+		for(var i in options)
 		{
 			mg.options[i] = options[i];
 		}
@@ -60,7 +60,7 @@ var mg = magazine = {};
 		for(var i = 0; i <= 4; i++)
 		{
 			mg.app.slides.push({
-				'page' : 'page-' + i,
+				'page' : 'slide-' + i,
 	    		'left' : mg.options.start,
 	    		'slide': (i - 1)
 			});
@@ -135,7 +135,7 @@ var mg = magazine = {};
 			mg.orientation(false);
 		    for(var i = 1; i <= mg.options.numberOfPagesToLoadOnInit; i++)
 			{
-				$('#mg-page-' + i).show();
+				$('#mg-slide-' + i).show();
 				//mg.scroll.kinetic($('#mg-page-1 article div')[0]);
 				if($.os.ios === true)
 				{
@@ -159,7 +159,7 @@ var mg = magazine = {};
 			}
 			else
 			{
-				$('#mg-page-' + i).load(mg.options.directory + '/' + content, mg.initLoadSuccess);
+				$('#mg-slide-' + i).load(mg.options.directory + '/' + content, mg.initLoadSuccess);
 			}
 		}
 	};
@@ -253,7 +253,7 @@ var mg = magazine = {};
 	};
 	
 	mg.calculate = function(){
-		var section = $('#mg-page-1'), width, marginLeft;
+		var section = $('#mg-slide-1'), width, marginLeft;
 		width = section.css('width');
 		marginLeft = section.css('margin-left');
 		width = parseInt(width.replace(/px/, ''));

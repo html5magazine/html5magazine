@@ -30,21 +30,34 @@
 /*jslint browser: true, sloppy: true, indent: 4 */
 /*global KineticModel: true */
 
-function FlickList(id) {
+function FlickList(element, name) {
 
-    var el = id; //document.getElementById(id),
-        scroller = new KineticModel(),
+    var /*el = document.getElementById(id),*/
+        el = element,
+    	scroller = new KineticModel(),
         pressed = false,
-        refPos = 0;
-
+        refPos = 0
+    	idName = name;
+        //console.log(el);
     function adjustRange() {
         var max = parseInt(window.getComputedStyle(el).height, 10);
+        //console.log('max1: ' + max);
+        //console.log('window.innerHeight: ' + window.innerHeight);
         max -= window.innerHeight;
+        //console.log('max2: ' + max);
+        if(max < 0)
+        {
+        	removeEvents(el);
+        	moveToTop(el);
+        	return;
+        }
+        addEvents(el);
         scroller.setRange(0, max);
     }
-
+    
     function tap(e) {
         pressed = true;
+        //console.log('untap: ' + idName + '');
         if (e.targetTouches && (e.targetTouches.length >= 1)) {
             refPos = e.targetTouches[0].clientY;
         } else {
@@ -52,20 +65,22 @@ function FlickList(id) {
         }
 
         scroller.resetSpeed();
-
-        //e.preventDefault();
+        /**/
+        e.preventDefault();
         //e.stopPropagation();
-        //return false;
+        return false;
+        /**/
     }
 
     function untap(e) {
         pressed = false;
-
+        
         scroller.release();
-
-        //e.preventDefault();
+        /**/
+        e.preventDefault();
         //e.stopPropagation();
-        //return false;
+        return false;
+        /**/
     }
 
     function drag(e) {
@@ -86,21 +101,22 @@ function FlickList(id) {
             scroller.setPosition(scroller.position += delta);
             refPos = pos;
         }
-
-        //e.preventDefault();
+        /**/
+        e.preventDefault();
         //e.stopPropagation();
-        //return false;
+        return false;
+        /**/
     }
 
     scroller.onPositionChanged = null;
-
+    
     if (el.style.hasOwnProperty('webkitTransform')) {
         scroller.onPositionChanged = function (y) {
             el.style.webkitTransform = 'translate3d(0, -' + Math.floor(y) + 'px, 0)';
         };
     }
-
-    if (!scroller.onPositionChanged && el.style.hasOwnProperty('MozTransform')) {
+    
+    if (!scroller.onPositionChanged && (typeof el.style['MozTransform'] === 'string')) {
         scroller.onPositionChanged = function (y) {
             el.style.MozTransform = 'translateY(-' + Math.floor(y) + 'px)';
         };
@@ -114,18 +130,41 @@ function FlickList(id) {
             el.style.top = '-' + Math.floor(y) + 'px';
         };
     }
-
-
-    el.addEventListener('mousedown', tap);
-    el.addEventListener('mousemove', drag);
-    el.addEventListener('mouseup', untap);
-
-    if (typeof window.ontouchstart !== 'undefined') {
-        el.addEventListener('touchstart', tap);
-        el.addEventListener('touchmove', drag);
+    function moveToTop(el){
+    	//console.log(el);
+    	if(el.style.hasOwnProperty('webkitTransform')){
+    		el.style.webkitTransform = 'translate3d(0, 0, 0)';
+    	}
+    	else if(typeof el.style['MozTransform'] === 'string'){
+    		el.style.MozTransform = 'translateY(0)';
+    	}
+    	else{
+    		el.style.top = '0px';
+    	}
+    }
+    function addEvents(el){
+	    el.addEventListener('mousedown', tap);
+	    el.addEventListener('mousemove', drag);
+	    el.addEventListener('mouseup', untap);
+	
+	    if (typeof window.ontouchstart !== 'undefined') {
+	        el.addEventListener('touchstart', tap);
+	        el.addEventListener('touchmove', drag);
         el.addEventListener('touchend', untap);
     }
+    }
+    function removeEvents(el){
+    	el.removeEventListener('mousedown', tap);
+        el.removeEventListener('mousemove', drag);
+        el.removeEventListener('mouseup', untap);
 
+        if (typeof window.ontouchstart !== 'undefined') {
+            el.removeEventListener('touchstart', tap);
+            el.removeEventListener('touchmove', drag);
+            el.removeEventListener('touchend', untap);
+        }
+    }
+    
     return {
         scroller: scroller,
         adjustRange: adjustRange

@@ -1,7 +1,5 @@
 /* css for medium devices e.g. ipad or other tablets */
 body {
-	/*background-color: #90EE90;*/
-	/*background: url('../images/g.png') repeat;*/
 	font-size: 1.1em;
     line-height: 1.4em;
 }
@@ -20,7 +18,7 @@ p {
 img {
 	max-width: 26em;
 }
-.sidebar-list-item {
+.sidebar-list-item, .sidebar-list-category {
 	width: 100%;
 	border-bottom: 1px solid #242424;
     border-top: 1px solid #707070;

@@ -19,7 +19,15 @@
         "5.html",
         "6.html"
     ],
+    "category": [
+    	"0",
+    	"0",
+    	"0",
+    	"0",
+    	"1",
+    	"1"
+    ],
     
     "sidebar" : true,
-    "sidebarFixed" : false
+    "sidebarFixed" : true
 }
