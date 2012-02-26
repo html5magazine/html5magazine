@@ -2,7 +2,7 @@
 var sel = (function(window, document, undefined){
 	var slice = (function(){
 	    try{
-	    	Array.prototype.slice.call( document.documentElement.childNodes, 0 )[0].nodeType;
+	    	Array.prototype.slice.call(document.documentElement.childNodes, 0)[0].nodeType;
 	    	return [].slice;
 	    }
 	    catch(e){
@@ -131,6 +131,7 @@ var sel = (function(window, document, undefined){
     	{
 	    	os.desktop = true, os.version = 1;
     	}
+	    
 	    return os;
 	};
 	
@@ -163,6 +164,7 @@ var sel = (function(window, document, undefined){
 	$$.prototype = {
 		selector: '',
 		length: 0,
+		os : {},
 		find: function(selector, context){
 			var byId = false, byTag = false, byClass = false;
 			if(!context){
@@ -279,14 +281,36 @@ var sel = (function(window, document, undefined){
 			//@TODO does it make sense to return this???
 			return $$(this.selector);
 		},
+		getJSON : function(url, success, error){
+		    return $.ajax({ url: url, success: success, error: error, dataType: 'json' });
+		},
 		toString: function(){
 			return this.selector + '';
 		}
 
 	};
-	$$.os = function(){
-		return this.osVersion || (this.osVersion = detectOs(navigator.userAgent));
-	};
+	// detect os, version
+	$$.os = detectOs(navigator.userAgent);
+	// detect ajax method for IE
+	if(typeof window.XMLHttpRequest === 'undefined' && typeof window.ActiveXObject === 'function'){
+	    window.XMLHttpRequest = function(){
+	        try{
+	        	return new ActiveXObject('Msxml2.XMLHTTP.6.0');
+	        }
+	        catch(e){
+	        	
+	        }
+	        try{
+	        	return new ActiveXObject('Msxml2.XMLHTTP.3.0');
+	        }
+	        catch(e){
+	        	
+	        }
+	        
+	        return new ActiveXObject('Microsoft.XMLHTTP');
+	    };
+	}
+
 	
 	return $$;
 	

@@ -49,3 +49,7 @@ test('get/set attribute', 5, function() {
 	attr = el.attr('hfdj');
 	equals(attr, undefined, 'no attribute found');
 });
+//os version
+test('os version', 1, function() {
+	equals(typeof $$.os, typeof {}, 'os should be an object');
+});

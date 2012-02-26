@@ -36,8 +36,10 @@ function FlickList(element, name) {
         el = element,
     	scroller = new KineticModel(),
         pressed = false,
-        refPos = 0
-    	idName = name;
+        refPos = 0,
+    	idName = name,
+    	touch = {}, state = {}, swipeThreshold = 150;
+    	
         //console.log(el);
     function adjustRange() {
         var max = parseInt(window.getComputedStyle(el).height, 10);
@@ -57,6 +59,20 @@ function FlickList(element, name) {
     
     function tap(e) {
         pressed = true;
+        state.touches = e.touches;
+        state.startTime = (new Date).getTime();
+        if(e.targetTouches){
+        	state.x = e.targetTouches[0].clientX;
+            state.y = e.targetTouches[0].clientY;
+        }
+        else{
+        	state.x = e.clientX;
+            state.y = e.clientY;
+        }
+        state.startX = state.x;
+        state.startY = state.y;
+        state.target = e.target;
+        state.duration = 0;
         //console.log('untap: ' + idName + '');
         if (e.targetTouches && (e.targetTouches.length >= 1)) {
             refPos = e.targetTouches[0].clientY;
@@ -74,7 +90,7 @@ function FlickList(element, name) {
 
     function untap(e) {
         pressed = false;
-        
+        touch = {}, state = {};
         scroller.release();
         /**/
         e.preventDefault();
@@ -84,28 +100,50 @@ function FlickList(element, name) {
     }
 
     function drag(e) {
-        var pos, delta;
-
+        var pos, delta, angle, found = true;
+        var moved = 0;
+        touch = (e.targetTouches ? e.targetTouches[0] : e);
         if (!pressed) {
             return;
         }
-
-        if (e.targetTouches && (e.targetTouches.length >= 1)) {
-            pos = e.targetTouches[0].clientY;
-        } else {
-            pos = e.clientY;
+        state.duration = (new Date).getTime() - state.startTime;
+        state.x = state.startX - touch.pageX;
+        state.y = state.startY - touch.pageY;
+        moved = Math.sqrt(Math.pow(Math.abs(state.x), 2) + Math.pow(Math.abs(state.y), 2));
+        
+        //console.log('moved', moved)
+        
+        if(moved > swipeThreshold) {
+        	angle = caluculateAngle();
+        	//console.log('angle', angle)
+        	if(angle === 'left' || angle === 'right'){
+        		pressed = false;
+        		return;
+    		}
+        	else{
+        		found = false;
+        	}
         }
-
-        delta = refPos - pos;
-        if (delta > 2 || delta < -2) {
-            scroller.setPosition(scroller.position += delta);
-            refPos = pos;
-        }
-        /**/
-        e.preventDefault();
-        //e.stopPropagation();
-        return false;
-        /**/
+        if(found === true)
+    	{
+	    	if (e.targetTouches && (e.targetTouches.length >= 1)) {
+	            pos = e.targetTouches[0].clientY;
+	        } else {
+	            pos = e.clientY;
+	        }
+	
+	        delta = refPos - pos;
+	        if (delta > 2 || delta < -2) {
+	            scroller.setPosition(scroller.position += delta);
+	            refPos = pos;
+	        }
+	        /**/
+	        e.preventDefault();
+	        //e.stopPropagation();
+	        return false;
+	        /**/
+    	}
+        	
     }
 
     scroller.onPositionChanged = null;
@@ -164,7 +202,37 @@ function FlickList(element, name) {
             el.removeEventListener('touchend', untap);
         }
     }
-    
+    function caluculateAngle() {
+		var X = state.x;
+		var Y = state.y;
+		var Z = Math.round(Math.sqrt(Math.pow(X,2)+Math.pow(Y,2))); //the distance - rounded - in pixels
+		var r = Math.atan2(Y,X); //angle in radians (Cartesian system)
+		var swipeAngle = Math.round(r*180/Math.PI); //angle in degrees
+		var direction;
+		if ( swipeAngle < 0 ) { swipeAngle =  360 - Math.abs(swipeAngle); }
+		direction = determineSwipeDirection(swipeAngle);
+
+		return direction;
+	}
+	
+	function determineSwipeDirection(swipeAngle) {
+		var swipeDirection;
+		if ( (swipeAngle <= 45) && (swipeAngle >= 0) ) {
+			swipeDirection = 'left';
+		} else if ( (swipeAngle <= 360) && (swipeAngle >= 315) ) {
+			swipeDirection = 'left';
+		} else if ( (swipeAngle >= 135) && (swipeAngle <= 225) ) {
+			swipeDirection = 'right';
+		} else if ( (swipeAngle > 45) && (swipeAngle < 135) ) {
+			swipeDirection = 'down';
+		} else {
+			swipeDirection = 'up';
+		}
+		
+		
+		return swipeDirection;
+	}
+	
     return {
         scroller: scroller,
         adjustRange: adjustRange

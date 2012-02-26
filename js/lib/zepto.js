@@ -821,7 +821,7 @@ window.Zepto = Zepto;
       callback && callback.call(this);
     }
     if (duration > 0) this.one(endEvent, wrappedCallback);
-
+console.log(cssProperties);
     setTimeout(function() {
       that.css(cssProperties);
       if (duration <= 0) setTimeout(function() {
