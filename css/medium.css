@@ -3,20 +3,18 @@ body {
 	font-size: 1.1em;
     line-height: 1.4em;
 }
-p {
-	max-width: 30em;
+/*size detection */
+#device-size{
+    font-size: 2px;
 }
 .content {
-    -moz-column-count: 2;
-    -webkit-column-count: 2;
-    column-count: 2;
-    -moz-column-gap: 1em;
-    -webkit-column-gap: 1em;
-    column-gap: 1em;
+    -moz-column-count: 1;
+    -webkit-column-count: ;
+    column-count: 1;
 }
-
-img {
-	max-width: 26em;
+.video{
+    height: 100%;
+    width: 100%;
 }
 .sidebar-list-item, .sidebar-list-category {
 	width: 100%;
@@ -38,4 +36,37 @@ img {
     font-family: Verdana,sans-serif;
     font-size: 0.8em;
     line-height: 1em;
+}
+
+@media only screen and (orientation: portrait) {
+    img{
+        max-width: 34em;
+    }
+    p {
+        max-width: 34em;
+    }
+    .video-container{
+        max-width: 30em;
+        width: 30em;
+        height: 16.875em;
+    }
+    .mg-carousel, .mg-carousel-item img, .mg-carousel-indicator{
+        max-width: 34em;
+    }
+}
+@media only screen and (orientation: landscape) {
+    img{
+        max-width: 46em;
+    }
+    p {
+        max-width: 46em;
+    }
+    .video-container{
+        max-width: 42em;
+        width: 42em;
+        height: 23.625em;
+    }
+    .mg-carousel, .mg-carousel-item img, .mg-carousel-indicator{
+        max-width: 46em;
+    }
 }

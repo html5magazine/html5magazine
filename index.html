@@ -8,8 +8,9 @@
 		<title>magazine</title>
 		<link rel="stylesheet" href="magazine/css/style.css" media="all">
 		<link rel="stylesheet" href="magazine/css/small.css" media="all and (max-width: 33.236em)">
-		<link rel="stylesheet" href="magazine/css/medium.css" media="all and (min-width: 33.236em) and (max-width: 63.236em)">
-		<link rel="stylesheet" href="magazine/css/large.css" media="all and (min-width: 63.236em)">
+		<link rel="stylesheet" href="magazine/css/medium.css" media="all and (min-width: 33.236em) and (max-width: 64.236em)">
+		<link rel="stylesheet" href="magazine/css/large.css" media="all and (min-width: 64.236em)">
+		<link rel="stylesheet" href="lib/video.js/video-js.css" media="all">
 	</head>
 	<body>
 		<div id="mg-loader">
@@ -42,11 +43,12 @@
 		<button id="mg-sidebar-button-close">
 			<span>Schließen</span>
 		</button>
-		<script src="js/lib/zepto.js"></script>
-		<script src="js/sel.js"></script>
+        <span id="device-size"></span>
+		<script src="js/lib/zepto-8.1.js"></script>
 		<script src="js/lib/iscroll-lite.js"></script>
-		<script src="js/lib/flicklist.js"></script>
-		<script src="js/lib/kinetic.js"></script>
+		<!-- video.js must be in the <head> for older IEs to work. -->
+  		<script src="lib/video.js/video.js"></script>
+        <script src="lib/audiojs/audio.min.js"></script>
 		<script src="js/magazine-closure.js"></script>
 	</body>
 </html>

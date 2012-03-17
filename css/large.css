@@ -1,26 +1,36 @@
 /* css for large devices e.g. desktop browser */
 body {
-	font-size: 1.2em;
+    font-size: 1.1em;
     line-height: 1.4em;
+}
+/*size detection */
+#device-size{
+    font-size: 3px;
 }
 
 p {
-	max-width: 30em;
+	max-width: 46em;
 }
 
 .content {
-    -moz-column-count: 3;
-    -webkit-column-count: 3;
-    column-count: 3;
-    -moz-column-gap: 1em;
-    -webkit-column-gap: 1em;
-    column-gap: 1em;
-    -moz-column-width: 24em;
-    -webkit-column-width: 24em;
-    column-width: 24em;
+    -moz-column-count: 1;
+    -webkit-column-count: 1;
+    column-count: 1;
 }
-img {
-	max-width: 24em;
+img{
+	max-width: 46em;
+}
+.video-container{
+    max-width: 46em;
+    width: 46em;
+    height: 25.875em;
+}
+.video{
+    height: 100%;
+    width: 100%;
+}
+#mg-sidebar {
+    /*max-width: 15.333em;*/
 }
 .sidebar-list-item, .sidebar-list-category {
 	width: 90%;
@@ -41,4 +51,7 @@ img {
 	color: white;
     font-size: 0.8em;
     line-height: 1em;
+}
+.mg-carousel, .mg-carousel-item img, .mg-carousel-indicator{
+	max-width: 46em;
 }

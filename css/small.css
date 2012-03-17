@@ -1,8 +1,11 @@
 /* css for small devices e.g. iphone or other mobile phones */
 body {
-    font-size: 1em;
+    font-size: 1.1em;
     line-height: 1.4em;
-    /*text-indent: 1em;*/
+}
+/*size detection */
+#device-size{
+    font-size: 1px;
 }
 p {
 	max-width: 20em;
@@ -12,17 +15,32 @@ p {
     -moz-column-count: 1;
     -webkit-column-count: 1;
     column-count: 1;
-    -moz-column-gap: 1em;
-    -webkit-column-gap: 1em;
-    column-gap: 1em;
 }
 
-img {
-	max-width: 16em;
+img{
+	max-width: 20em;
 }
-#mg-sidebar {
-	width: 40%;
-	left: -40%;	
+.video-container{
+    max-width: 14em;
+    width: 14em;
+    height: 7.875em;
+}
+.video{
+    height: 100%;
+    width: 100%;
+}
+.audio-container, .audiojs{
+    max-width: 14em;
+    width: 14em;
+}
+.audiojs .scrubber{
+    max-width: 8.521em;
+}
+.audiojs .play-pause{
+    max-width: 0.76em;
+}
+.audiojs .time{
+    max-width: 2.465em;
 }
 .sidebar-list-item, .sidebar-list-category {
 	width: 100%;
@@ -43,4 +61,12 @@ img {
 	color: white;
     font-size: 0.6em;
     line-height: 0.9em;
+}
+
+.mg-carousel, .mg-carousel-item img, .mg-carousel-indicator{
+	min-width: 8em;
+	max-width: 20em;
+}
+.mg-carousel{
+    /*max-height: 8em;*/
 }
