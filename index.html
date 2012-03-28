@@ -6,6 +6,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<title>magazine</title>
+        <link rel="stylesheet" href="css/reset.css" media="all">
 		<link rel="stylesheet" href="magazine/css/style.css" media="all">
 		<link rel="stylesheet" href="magazine/css/small.css" media="all and (max-width: 33.236em)">
 		<link rel="stylesheet" href="magazine/css/medium.css" media="all and (min-width: 33.236em) and (max-width: 64.236em)">
@@ -16,6 +17,15 @@
 		<div id="mg-loader">
 			<p>lade Ausgabe</p>
 		</div>
+        <header class="init">
+            <div id="mg-menubar">
+                <button id="mg-button-back" class="mg-menubar-button back">Zurück</button>
+                <button id="mg-button-menu" class="mg-menubar-button menu">Inhalt</button>
+            </div>
+            <div id="mg-menubar-open">
+            <span>---</span>
+            </div>
+        </header>
 		<div id="mg-container">
 			<div id="mg-slider">
 				<section id="mg-slide-0" class="mg-slider-page">
@@ -50,5 +60,15 @@
   		<script src="lib/video.js/video.js"></script>
         <script src="lib/audiojs/audio.min.js"></script>
 		<script src="js/magazine-closure.js"></script>
+       <div id="mg-lightbox-container">
+            <div class="transparency"></div>
+            <div id="mg-lightbox">
+                <div class="mg-lightbox-close"></div>
+                <img src="images/placeholder.gif" alt="placeholder" title="placeholder">
+                <span class="mg-lightbox-image-text">
+                    placeholder
+                </span>
+            </div>
+        </div>
 	</body>
 </html>

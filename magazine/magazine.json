@@ -30,10 +30,11 @@
     
     "sidebar" : true,
     "sidebarFixed" : true,
-    "sidebarPortrait" : true,
+    "sidebarPortrait" : false,
     "sidebarLandscape" : true,
     
     "video": true,
     "audio": true,
-    "carousel": true
+    "carousel": true,
+    "lightbox": true
 }

@@ -17,7 +17,7 @@ p {
     column-count: 1;
 }
 
-img{
+img, .image-text{
 	max-width: 20em;
 }
 .video-container{
@@ -51,7 +51,7 @@ img{
     padding: 0 6px 4px 0;
 }
 .item-image {
-	width: 20px;
+	width: 15px;
 	height: 20px;
 	margin: 3px;
 	float: left;
@@ -61,6 +61,7 @@ img{
 	color: white;
     font-size: 0.6em;
     line-height: 0.9em;
+    height: 26px;
 }
 
 .mg-carousel, .mg-carousel-item img, .mg-carousel-indicator{
